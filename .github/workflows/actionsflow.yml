@@ -3,7 +3,9 @@ name: Vhezly Discord Notifications
 on:
   schedule:
     - cron: '*/10 * * * *'  # Alle 10 Minuten prüfen
-  workflow_dispatch:       # Manuelles Auslösen möglich
+  on:
+  workflow_dispatch:
+       # Manuelles Auslösen möglich
 
 jobs:
   youtube_notifications:
