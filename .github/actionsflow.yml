@@ -1,0 +1,34 @@
+name: Vhezly Discord Notifications
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'  # Alle 10 Minuten prüfen
+  workflow_dispatch:       # Manuelles Auslösen möglich
+
+jobs:
+  youtube_notifications:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for new YouTube Livestreams
+        uses: actionsflow/actionsflow-action@v1
+        with:
+          config: |
+            on:
+              rss:
+                url: https://www.youtube.com/@Vhezly
+            jobs:
+              live_notifications:
+                if: "contains(trigger.outputs.title, 'LIVE') || contains(trigger.outputs.title, 'Live')"
+                runs:
+                  - run: |
+                      curl -X POST -H "Content-Type: application/json" \
+                      -d '{"content": "@everyone 🚨 **Vhezly ist JETZT LIVE!** 🚨\nKommt vorbei und lasst ein bisschen Liebe da! 💜\n▶️ {{ title }} → {{ link }}"}' \
+                      https://discord.com/api/webhooks/1336065545346355240/akFOkFka9btlWZ4p98u4CvRpWQSWLWuAokyds4xZBzcFjZ0HQnoqz8zlMTO1oH5Z9Wsc
+
+              video_notifications:
+                if: "!contains(trigger.outputs.title, 'LIVE') && !contains(trigger.outputs.title, 'Live')"
+                runs:
+                  - run: |
+                      curl -X POST -H "Content-Type: application/json" \
+                      -d '{"content": "@everyone 🍿 **Neues Video von Vhezly ist da!**\nSchnappt euch was zu knabbern und schaut rein! 👀\n▶️ {{ title }} → {{ link }}"}' \
+                      https://discord.com/api/webhooks/1336066232742576279/sdI-2E77bNOnaQfhgBZZ09koeb5b4OYbE0hZVuAxW7sM2kj4r5OWwHjBt3d34Xa0k-aq
